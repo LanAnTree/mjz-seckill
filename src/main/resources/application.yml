@@ -1,0 +1,86 @@
+server:
+  port: 80
+
+spring:
+  rabbitmq:
+    host: localhost
+    username: guest
+    password: guest
+    virtual-host: /
+    port: 5672
+    listener:
+      simple:
+        concurrency: 10
+        #消费者最大数量
+        max-concurrency: 10
+        #限制消费者每次只处理一条消息，处理完再继续下一条消息
+        prefetch: 1
+        #启动时是否默认启动容器，默认true
+        auto-startup: true
+        #被拒绝时重新进入队列
+        default-requeue-rejected: true
+    template:
+      retry:
+        #发布重试，默认false
+        enabled: true
+        #重试时间 默认1000ms
+        initial-interval: 1000
+        #重试最大次数，默认3次
+        max-attempts: 3
+        #重试最大间隔时间，默认10000ms
+        max-interval: 10000
+        #重试间隔的乘数。比如配2.0 第一次等10s，第二次等20s，第三次等40s
+        multiplier: 1.0
+  application:
+    name: seckill
+  redis:
+    #服务器地址
+    host: localhost
+    #密码
+    password: password
+    #服务器端口
+    port: 6379
+    #数据库
+    database: 0
+    #超时时间
+    timeout: 10
+    lettuce:
+      shutdown-timeout: 1
+      pool:
+        #最大连接数，默认8
+        max-active: 1024
+        #最大连接阻塞等待时间，默认-1
+        max-wait: 1
+        #最大空闲连接
+        max-idle: 200
+        #最小空闲连接
+        min-idle: 5
+  #是否缓存空值
+  cache:
+    redis:
+      cache-null-values: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tb_seckill?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=Asia/Shanghai
+    username: root
+    password: password
+    druid:
+      initial-size: 2 # 初始化时建立物理连接的个数。默认0
+      max-active: 10 # 最大连接池数量，默认8
+      min-idle: 1 # 最小连接池数量
+      max-wait: 2000 # 获取连接时最大等待时间，单位毫秒。
+      pool-prepared-statements: false # 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+      max-pool-prepared-statement-per-connection-size: -1 # 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
+      # 启用Druid内置的Filter，会使用默认的配置。可自定义配置，见下方的各个filter节点。
+      filters: stat,wall
+
+
+mybatis-plus:
+  mapper-locations:
+    - classpath:/mapper/*.xml
+  type-aliases-package: com.lanan.mjzseckill.entity
+
+
+logging:
+  level:
+    com.lanan.mjzseckill.mapper: debug

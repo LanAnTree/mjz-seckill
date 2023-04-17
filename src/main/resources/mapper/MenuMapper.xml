@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanan.mjzseckill.mapper.MenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.lanan.mjzseckill.entity.Menu">
+        <id column="id" property="id" />
+        <result column="menu_name" property="menuName" />
+        <result column="perm" property="perm" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, perm, menu_name
+    </sql>
+
+    <select id="getPermissionsByUserId" resultType="java.lang.String">
+        SELECT
+            d.perm
+        FROM
+            t_user_role a
+                INNER JOIN t_role b ON a.role_id = b.id
+                INNER JOIN t_role_menu c ON b.id = c.role_id
+                INNER JOIN t_menu d ON c.menu_id = d.id
+        WHERE
+            user_id = #{userId}
+        GROUP BY
+            d.perm
+    </select>
+
+
+</mapper>
